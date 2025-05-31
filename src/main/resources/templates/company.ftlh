@@ -16,7 +16,6 @@
             <div class="col-md-10 col-lg-8">
                 <h3 class="mb-4 text-primary">Company Profile</h3>
 
-                <!-- Company Details -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body p-4">
                         <h4 class="mb-3">Company Details</h4>

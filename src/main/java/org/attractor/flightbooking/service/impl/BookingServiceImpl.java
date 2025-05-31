@@ -1,5 +1,6 @@
 package org.attractor.flightbooking.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.attractor.flightbooking.dto.BookingDto;
 import org.attractor.flightbooking.dto.BookingInfoDto;
 import org.attractor.flightbooking.dto.UserDto;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class BookingServiceImpl implements BookingService {
 
     @Autowired
@@ -33,6 +35,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public void createBooking(BookingDto bookingDto, String userEmail) {
+        log.info("Creating booking for userEmail={} and ticketId={}", userEmail, bookingDto.getTicketId());
         User user = userService.findByEmail(userEmail);
         Ticket ticket = ticketService.findById(bookingDto.getTicketId());
 
@@ -48,6 +51,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Page<BookingInfoDto> getUserBookingInfo(String userEmail, Pageable pageable) {
+        log.info("Fetching booking info for userEmail={}", userEmail);
         User user = userService.findByEmail(userEmail);
         Page<Booking> bookings = bookingRepository.findByUserId(user.getId(), pageable);
         return bookings.map(booking -> {

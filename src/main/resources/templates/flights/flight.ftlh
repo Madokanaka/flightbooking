@@ -47,7 +47,6 @@
                         </#if>
                     </div>
 
-                    <!-- Date Range -->
                     <div class="col-md-4">
                         <label for="dateRange" class="form-label fw-bold">Travel Dates</label>
                         <input type="text" id="dateRange" name="dateRange" class="form-control" placeholder="Select dates" required>
@@ -61,7 +60,6 @@
                         </#if>
                     </div>
 
-                    <!-- Submit Button -->
                     <div class="col-12 text-end">
                         <button type="submit" class="btn btn-warning text-white px-4">Search Flights</button>
                     </div>
@@ -116,7 +114,6 @@
                                 </div>
                             </div>
 
-                            <!-- Ticket Modal -->
                             <div class="modal fade" id="ticketModal${flight.id}" tabindex="-1" aria-labelledby="ticketModalLabel${flight.id}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -192,7 +189,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap and jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -285,9 +281,7 @@
                 document.querySelector('#returnDate').value = '';
             });
 
-            // Seat selection
-            // Seat selection
-            // Seat selection
+
             document.querySelectorAll('.seat').forEach(seat => {
                 seat.addEventListener('click', function() {
                     if (this.classList.contains('booked')) {
@@ -300,28 +294,23 @@
                     const price = this.dataset.price;
                     const ticketClass = this.dataset.class;
 
-                    // Логи для отладки
                     console.log('Flight ID:', flightId);
                     console.log('Ticket ID:', ticketId);
 
-                    // Highlight selected seat
                     modal.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
                     this.classList.add('selected');
 
-                    // Update ticket info
                     modal.querySelector('#selected-ticket-info' + flightId).innerHTML =
                         '<p>Selected Seat: ' + seatNumber + '</p>' +
                         '<p>Class: ' + ticketClass + '</p>' +
                         '<p>Price: $' + price + '</p>';
 
-                    // Enable book button
                     const bookButton = modal.querySelector('.book-ticket-btn');
                     bookButton.disabled = false;
                     bookButton.dataset.ticketId = ticketId;
                 });
             });
 
-// Booking
             document.querySelectorAll('.book-ticket-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const ticketId = this.dataset.ticketId;

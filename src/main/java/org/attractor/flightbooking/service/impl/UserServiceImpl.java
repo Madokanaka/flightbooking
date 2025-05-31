@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserDtoByEmail(String email) {
+        log.info("Fetching user by email={}", email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         UserDto userDto = new UserDto();
@@ -70,6 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveAvatar(String email, String fileName) {
+        log.info("Saving image for userId={}", email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setLogoPath(fileName);
@@ -81,6 +83,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void createCompany(CompanyCreationDto companyDto) {
+        log.info("Creating company with name={}", companyDto.getName());
         User company = new User();
         company.setName(companyDto.getName());
         company.setEmail(companyDto.getEmail());
@@ -94,6 +97,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void toggleFreezeCompany(Long companyId) {
+        log.info("Toggling freeze for company with id={}", companyId);
         User company = userRepository.findById(companyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
         if (!company.getRoles().stream().anyMatch(role -> role.getRoleName().equals("COMPANY"))) {
@@ -105,6 +109,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserDtoById(Long id) {
+        log.info("Fetching user by id={}", id);
 
         User user =  userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Company not found"));
         return toUserDto(user);
@@ -153,6 +158,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAllCompanies() {
+        log.info("Fetching all companies");
         return userRepository.findByRolesRoleName("COMPANY").stream()
                 .map(this::toUserDto)
                 .collect(Collectors.toList());
@@ -160,11 +166,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<CompanyDto> findAllCompaniesWithFlights(Pageable pageable) {
+        log.info("Fetching all companies with flights");
         return userRepository.findByRolesRoleName("COMPANY", pageable)
                 .map(this::toCompanyDto);
     }
 
     private UserDto toUserDto(User user) {
+        log.info("Converting user={} to UserDto", user);
         UserDto dto = new UserDto();
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());

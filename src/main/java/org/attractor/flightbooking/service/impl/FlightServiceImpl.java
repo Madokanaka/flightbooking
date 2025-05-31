@@ -1,6 +1,7 @@
 package org.attractor.flightbooking.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.attractor.flightbooking.dto.FlightCreationDto;
 import org.attractor.flightbooking.dto.FlightDto;
 import org.attractor.flightbooking.dto.TicketDto;
@@ -24,18 +25,21 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FlightServiceImpl implements FlightService {
     private final FlightRepository flightRepository;
     private final UserService userService;
 
     @Override
     public Page<FlightDto> findAllFlights(int page) {
+        log.info("Fetching all flights");
         return flightRepository.findAll(PageRequest.of(page - 1, 10))
                 .map(this::toDto);
     }
 
     @Override
     public Page<FlightDto> searchFlights(String departureCity, String arrivalCity, LocalDate departureDate, LocalDate returnDate, int page) {
+        log.info("Searching for flights from {} to {} on dates {} and {}", departureCity, arrivalCity, departureDate, returnDate);
         String departureCityStr = departureCity !=null ?departureCity.toUpperCase(): null;
         String arrivalCityStr = arrivalCity != null?arrivalCity.toUpperCase(): null;
         return flightRepository.findByFilters(
@@ -48,6 +52,7 @@ public class FlightServiceImpl implements FlightService {
 
 
     private FlightDto toDto(Flight flight) {
+        log.info("Converting flight={} to FlightDto", flight);
         return FlightDto.builder()
                 .id(flight.getId())
                 .flightNumber(flight.getFlightNumber())
@@ -75,6 +80,7 @@ public class FlightServiceImpl implements FlightService {
     @Transactional
     @Override
     public void createFlight(FlightCreationDto flightDto, String companyEmail) {
+        log.info("Creating flight with");
         User company = userService.findByEmail(companyEmail);
 
         String flightNumber;
@@ -116,6 +122,7 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public Page<FlightDto> getCompanyFlights(String companyEmail, Pageable pageable) {
+        log.info("Fetching company flights for company with email={}", companyEmail);
         User company = userService.findByEmail(companyEmail);
 
         Page<Flight> flights = flightRepository.findByCompanyId(company.getId(), pageable);

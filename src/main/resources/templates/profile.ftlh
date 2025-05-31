@@ -15,7 +15,6 @@
             <div class="col-md-10 col-lg-8">
                 <h3 class="mb-4 text-primary">User Profile</h3>
 
-                <!-- User Details -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body p-4">
                         <h4 class="mb-3">Personal Details</h4>
@@ -32,7 +31,6 @@
                     </div>
                 </div>
 
-                <!-- Booking History -->
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <h4 class="mb-3">Booking History</h4>
@@ -64,7 +62,6 @@
                                 </tbody>
                             </table>
 
-                            <!-- Pagination for Bookings -->
                             <#if totalPages?? && totalPages gt 1>
                                 <nav aria-label="Page navigation" class="mt-4">
                                     <ul class="pagination justify-content-center">
@@ -97,7 +94,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap and jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </@layout.layout>
