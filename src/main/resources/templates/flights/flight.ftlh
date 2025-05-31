@@ -12,11 +12,12 @@
         >
     </#if>
 
+    <#assign defaultLogo = "https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small_2x/Basic_Ui__28186_29.jpg">
+
     <div class="container-fluid bg-light py-4 mb-5">
         <div class="row justify-content-center">
             <div class="col-md-10 col-lg-8">
                 <form id="searchForm" action="/flights/search" method="get" class="row g-3 bg-white p-4 rounded shadow" onsubmit="return validateForm()">
-                    <!-- Departure City -->
                     <div class="col-md-3">
                         <label for="departureCity" class="form-label fw-bold">Departure City</label>
                         <@spring.formSingleSelect "searchDto.departureCity", cityOptions, 'id="departureCity" class="form-select" required' />
@@ -27,7 +28,6 @@
                         </#if>
                     </div>
 
-                    <!-- Swap and Clear Buttons -->
                     <div class="col-md-2 d-flex align-items-end pb-2">
                         <button type="button" class="btn btn-outline-secondary me-2" id="swapCities" title="Swap cities">
                             <i class="bi bi-arrow-left-right"></i>
@@ -37,7 +37,6 @@
                         </button>
                     </div>
 
-                    <!-- Arrival City -->
                     <div class="col-md-3">
                         <label for="arrivalCity" class="form-label fw-bold">Arrival City</label>
                         <@spring.formSingleSelect "searchDto.arrivalCity", cityOptions, 'id="arrivalCity" class="form-select" required' />
@@ -92,11 +91,7 @@
                                 <div class="card-body p-4">
                                     <div class="row align-items-center">
                                         <div class="col-md-2">
-                                            <#if flight.company.logoPath??>
-                                                <img src="${flight.company.logoPath}" alt="${flight.company.name} Logo" class="img-fluid" style="max-height: 50px;" />
-                                            <#else>
-                                                <span class="fw-bold">${flight.company.name}</span>
-                                            </#if>
+                                            <img src="${flight.company.logoPath?has_content?then('/api/images/' + flight.company.logoPath, defaultLogo)}" alt="${flight.company.name} Logo" class="img-fluid" style="max-height: 100px;" />
                                         </div>
                                         <div class="col-md-3">
                                             <p class="mb-1 fw-bold">${cityOptions[flight.departureCity]!flight.departureCity} → ${cityOptions[flight.arrivalCity]!flight.arrivalCity}</p>
@@ -132,6 +127,7 @@
                                         <div class="modal-body">
                                             <h6>Flight Details</h6>
                                             <p>
+                                                <img src="${flight.company.logoPath?has_content?then('/api/images/' + flight.company.logoPath, defaultLogo)}" alt="${flight.company.name} Logo" class="img-fluid" style="max-height: 50px;" /><br>
                                                 From: ${cityOptions[flight.departureCity]!flight.departureCity}<br>
                                                 To: ${cityOptions[flight.arrivalCity]!flight.arrivalCity}<br>
                                                 Departure: ${flight.departureTime}<br>
@@ -142,7 +138,6 @@
                                             <div class="seat-map">
                                                 <#list flight.tickets as ticket>
                                                     <div class="seat ${ticket.ticketClass?lower_case} <#if ticket.isBooked()>booked</#if>"
-
                                                          data-ticket-id="${ticket.id}"
                                                          data-seat-number="${ticket.seatNumber}"
                                                          data-price="${ticket.price}"

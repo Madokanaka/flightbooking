@@ -1,5 +1,7 @@
 <#import "../layout.ftlh" as layout>
 <@layout.layout ; spring>
+    <#assign defaultLogo = "https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small_2x/Basic_Ui__28186_29.jpg">
+
     <div class="container-fluid bg-light py-4 mb-5">
         <div class="row justify-content-center">
             <div class="col-md-10 col-lg-8">
@@ -22,6 +24,7 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Logo</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Status</th>
@@ -31,9 +34,12 @@
                                 <tbody>
                                 <#list companies as company>
                                     <tr>
+                                        <td>
+                                            <img src="${company.logoPath?has_content?then('/api/images/' + company.logoPath, defaultLogo)}" alt="${company.name} Logo" class="img-fluid" style="max-height: 50px;" />
+                                        </td>
                                         <td>${company.name}</td>
                                         <td>${company.email}</td>
-                                        <td>${company.isFrozen()?then("Booked", "Available")}</td>
+                                        <td>${company.isFrozen()?then("Frozen", "Active")}</td>
                                         <td>
                                             <form action="/admin/company/${company.id}/toggle-freeze" method="post">
                                                 <input type="hidden" name="_csrf" value="${_csrf.token}"/>
