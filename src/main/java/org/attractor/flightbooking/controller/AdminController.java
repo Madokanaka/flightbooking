@@ -45,13 +45,13 @@ public class AdminController {
     }
 
     @PostMapping("/company/create")
-    public String createCompany(@Valid @ModelAttribute("companyForm") CompanyCreationDto companyDto,
+    public String createCompany(@Valid CompanyCreationDto companyDto,
                                 BindingResult bindingResult,
                                 Model model) {
         if (bindingResult.hasErrors()) {
             return "admin/company-create";
         }
-        if (userService.findByEmail(companyDto.getEmail()) != null) {
+        if (userService.existsByEmail(companyDto.getEmail())) {
             bindingResult.rejectValue("email", "error.companyForm", "Email already exists");
             return "admin/company-create";
         }

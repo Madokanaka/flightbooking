@@ -33,6 +33,14 @@
                                 <label class="form-label fw-bold">Logo</label>
                                 <img src="${company.logoPath?has_content?then('/api/images/' + company.logoPath, defaultLogo)}" alt="Company Logo" class="img-fluid" style="max-height: 100px;" />
                             </div>
+                            <div class="col-md-12">
+                                <form action="/images" method="post" enctype="multipart/form-data">
+                                    <label class="form-label fw-bold">Upload New Logo</label>
+                                    <input type="file" name="file" accept="image/*" class="form-control mb-2" required>
+                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
