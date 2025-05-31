@@ -26,4 +26,6 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     Page<Flight> findByDepartureCityAndArrivalCity(String departureCity, String arrivalCity, Pageable pageable);
 
+    boolean existsByFlightNumber(String flightNumber);
+    Page<Flight> findByCompanyId(Long companyId, Pageable pageable);
 }

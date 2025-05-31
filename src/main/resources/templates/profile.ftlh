@@ -6,7 +6,7 @@
         <#assign
         userPr = SPRING_SECURITY_CONTEXT.authentication.principal
         name = userPr.getUsername()
-        isUser = userPr.authorities?seq_contains("ROLE_USER")
+        isUser = userPr.authorities?seq_contains("USER")
         >
     </#if>
 

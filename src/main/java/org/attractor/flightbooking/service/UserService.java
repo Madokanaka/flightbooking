@@ -10,5 +10,8 @@ public interface UserService {
 
     UserDto findUserDtoByEmail(String email);
 
+
+    void saveAvatar(String email, String fileName);
+
     boolean existsByEmail(String email);
 }

@@ -53,9 +53,9 @@
         <#assign
         userPr = SPRING_SECURITY_CONTEXT.authentication.principal
         name = userPr.getUsername()
-        isAdmin = userPr.authorities?seq_contains("ROLE_ADMIN")
-        isCompany = userPr.authorities?seq_contains("ROLE_COMPANY")
-        isUser = userPr.authorities?seq_contains("ROLE_USER")
+        isAdmin = userPr.authorities?seq_contains("ADMIN")
+        isCompany = userPr.authorities?seq_contains("COMPANY")
+        isUser = userPr.authorities?seq_contains("USER")
         >
     </#if>
     <header>

@@ -1,6 +1,7 @@
 package org.attractor.flightbooking.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.attractor.flightbooking.dto.UserDto;
 import org.attractor.flightbooking.exception.UserNotFoundException;
 import org.attractor.flightbooking.model.Role;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -53,6 +55,16 @@ public class UserServiceImpl implements UserService {
         userDto.setName(user.getName());
         userDto.setLogoPath(user.getLogoPath());
         return userDto;
+    }
+
+    @Override
+    public void saveAvatar(String email, String fileName) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        user.setLogoPath(fileName);
+        userRepository.save(user);
+
+        log.debug("Image saved with fileName={}", fileName);
     }
 
     @Override
