@@ -1,5 +1,8 @@
 <#import "../layout.ftlh" as layout>
 <@layout.layout ; spring>
+
+    <#assign defaultLogo = "https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small_2x/Basic_Ui__28186_29.jpg">
+
     <div class="container-fluid bg-light py-4 mb-5">
         <div class="row justify-content-center">
             <div class="col-md-10 col-lg-8">
@@ -11,7 +14,10 @@
 
                         <#if companies?? && companies?has_content>
                             <#list companies as company>
-                                <h4>${company.name} (${company.email})</h4>
+                                <h4 class="d-flex align-items-center">
+                                    <img src="${company.logoPath?has_content?then('/api/images/' + company.logoPath, defaultLogo)}" alt="${company.name} Logo" class="company-logo me-3" />
+                                    ${company.name} (${company.email})
+                                </h4>
                                 <table class="table table-striped mb-5">
                                     <thead>
                                     <tr>
@@ -69,4 +75,22 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .company-logo {
+            max-height: 50px;
+            max-width: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 2px;
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .company-logo {
+                max-height: 40px;
+                max-width: 80px;
+            }
+        }
+    </style>
 </@layout.layout>

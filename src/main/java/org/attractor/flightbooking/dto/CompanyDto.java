@@ -13,4 +13,5 @@ public class CompanyDto {
     private String email;
     private boolean isFrozen;
     private List<FlightDto> flights;
+    private String logoPath;
 }

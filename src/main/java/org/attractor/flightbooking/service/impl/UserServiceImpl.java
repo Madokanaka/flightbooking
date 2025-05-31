@@ -121,6 +121,7 @@ public class UserServiceImpl implements UserService {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setFrozen(user.getIsFrozen());
+        dto.setLogoPath(user.getLogoPath());
         dto.setFlights(user.getFlights().stream()
                 .map(this::toFlightDto)
                 .collect(Collectors.toList()));
