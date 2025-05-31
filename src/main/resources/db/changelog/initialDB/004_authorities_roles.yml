@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004 insert data into roles_authorities table
+      author: Seitek
+      changes:
+        - sql:
+            comment: Link roles to authorities
+            sql: |
+              insert into roles_authorities(role_id, authority_id)
+              select r.id, a.id
+              from roles r
+              join authorities a on
+                (r.role_name = 'ADMIN' and a.authority = 'FULL') or
+                (r.role_name = 'ADMIN' and a.authority = 'READ_ONLY') or
+                (r.role_name = 'USER' and a.authority = 'USER_ACCESS') or
+                (r.role_name = 'USER' and a.authority = 'READ_ONLY') or  
+                (r.role_name = 'COMPANY' and a.authority = 'READ_ONLY') or
+                (r.role_name = 'COMPANY' and a.authority = 'COMPANY_ACCESS');
