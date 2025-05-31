@@ -1,8 +1,10 @@
 package org.attractor.flightbooking.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.attractor.flightbooking.model.City;
 
 import java.time.LocalDateTime;
@@ -10,6 +12,8 @@ import java.util.List;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class FlightDto {
     private Long id;
     @NotNull(message = "Flight number is required")

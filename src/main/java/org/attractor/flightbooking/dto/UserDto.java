@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UserDto {
     private Long id;
@@ -26,4 +28,6 @@ public class UserDto {
 
     private String logoPath;
 
+    private boolean isFrozen;
+    private List<String> roleNames;
 }

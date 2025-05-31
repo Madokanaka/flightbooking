@@ -10,4 +10,8 @@ public interface TicketService {
     Ticket findById(Long ticketId);
 
     void updateTicketStatus(Long ticketId, boolean isBooked);
+
+    long countBookingsByCompanyId(Long companyId);
+
+    boolean hasActiveBookings(Long companyId);
 }

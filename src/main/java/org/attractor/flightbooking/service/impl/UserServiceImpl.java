@@ -2,18 +2,28 @@ package org.attractor.flightbooking.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.attractor.flightbooking.dto.CompanyCreationDto;
+import org.attractor.flightbooking.dto.CompanyDto;
+import org.attractor.flightbooking.dto.FlightDto;
+import org.attractor.flightbooking.dto.TicketDto;
 import org.attractor.flightbooking.dto.UserDto;
+import org.attractor.flightbooking.exception.ResourceNotFoundException;
 import org.attractor.flightbooking.exception.UserNotFoundException;
 import org.attractor.flightbooking.model.Role;
 import org.attractor.flightbooking.model.User;
 import org.attractor.flightbooking.repository.UserRepository;
 import org.attractor.flightbooking.service.RoleService;
+import org.attractor.flightbooking.service.TicketService;
 import org.attractor.flightbooking.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final TicketService ticketService;
 
     @Override
     @Transactional
@@ -65,6 +76,105 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         log.debug("Image saved with fileName={}", fileName);
+    }
+
+    @Transactional
+    @Override
+    public void createCompany(CompanyCreationDto companyDto) {
+        User company = new User();
+        company.setName(companyDto.getName());
+        company.setEmail(companyDto.getEmail());
+        company.setPassword(passwordEncoder.encode(companyDto.getPassword()));
+        company.setIsFrozen(false);
+        Role companyRole = roleService.findRoleByName("COMPANY");
+        company.setRoles(Collections.singletonList(companyRole));
+        userRepository.save(company);
+    }
+
+    @Transactional
+    @Override
+    public void toggleFreezeCompany(Long companyId) {
+        User company = userRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
+        if (!company.getRoles().stream().anyMatch(role -> role.getRoleName().equals("COMPANY"))) {
+            throw new ResourceNotFoundException("Can only freeze/unfreeze companies");
+        }
+        company.setIsFrozen(!company.getIsFrozen());
+        userRepository.save(company);
+    }
+
+    @Override
+    public UserDto findUserDtoById(Long id) {
+
+        User user =  userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Company not found"));
+        return toUserDto(user);
+    }
+
+    private CompanyDto toCompanyDto(User user) {
+        CompanyDto dto = new CompanyDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setFrozen(user.getIsFrozen());
+        dto.setFlights(user.getFlights().stream()
+                .map(this::toFlightDto)
+                .collect(Collectors.toList()));
+        return dto;
+    }
+
+    private FlightDto toFlightDto(org.attractor.flightbooking.model.Flight flight) {
+        FlightDto dto = new FlightDto();
+        dto.setId(flight.getId());
+        dto.setFlightNumber(flight.getFlightNumber());
+        dto.setDepartureCity(flight.getDepartureCity());
+        dto.setArrivalCity(flight.getArrivalCity());
+        dto.setDepartureTime(flight.getDepartureTime());
+        dto.setArrivalTime(flight.getArrivalTime());
+        dto.setCompany((FlightDto.CompanyDto.builder()
+                .id(flight.getCompany().getId())
+                .name(flight.getCompany().getName())
+                .logoPath(flight.getCompany().getLogoPath())
+                .build()));
+        dto.setTickets(flight.getTickets().stream()
+                .map(this::toTicketDto)
+                .collect(Collectors.toList()));
+        return dto;
+    }
+
+    private TicketDto toTicketDto(org.attractor.flightbooking.model.Ticket ticket) {
+        TicketDto dto = new TicketDto();
+        dto.setId(ticket.getId());
+        dto.setSeatNumber(ticket.getSeatNumber());
+        dto.setTicketClass(ticket.getTicketClass());
+        dto.setPrice(ticket.getPrice());
+        dto.setBooked(ticket.isBooked());
+        return dto;
+    }
+
+    @Override
+    public List<UserDto> findAllCompanies() {
+        return userRepository.findByRolesRoleName("COMPANY").stream()
+                .map(this::toUserDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<CompanyDto> findAllCompaniesWithFlights(Pageable pageable) {
+        return userRepository.findByRolesRoleName("COMPANY", pageable)
+                .map(this::toCompanyDto);
+    }
+
+    private UserDto toUserDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setName(user.getName());
+        dto.setFrozen(user.getIsFrozen());
+        dto.setLogoPath(user.getLogoPath());
+        dto.setRoleNames(user.getRoles().stream()
+                .map(Role::getRoleName)
+                .collect(Collectors.toList()));
+        return dto;
     }
 
     @Override

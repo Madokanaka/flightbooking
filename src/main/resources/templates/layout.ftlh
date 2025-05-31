@@ -82,7 +82,7 @@
                             <li class="nav-item">
                                 <#if isCompany>
                                     <a class="nav-link" href="/company">Company Profile</a>
-                                <#else>
+                                <#elseif isUser>
                                     <a class="nav-link" href="/profile">Profile</a>
                                 </#if>
                             </li>

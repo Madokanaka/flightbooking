@@ -27,4 +27,13 @@ public class TicketServiceImpl implements TicketService {
         ticket.setBooked(isBooked);
         ticketRepository.save(ticket);
     }
-}
+
+    @Override
+    public long countBookingsByCompanyId(Long companyId) {
+        return ticketRepository.countByFlightCompanyIdAndIsBookedTrue(companyId);
+    }
+
+    @Override
+    public boolean hasActiveBookings(Long companyId) {
+        return ticketRepository.existsByFlightCompanyIdAndIsBookedTrue(companyId);
+    }}

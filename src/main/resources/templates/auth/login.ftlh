@@ -16,7 +16,7 @@
                         </#if>
                         <div class="form-group mb-3">
                             <label class="form-label" for="form3Example1cg">Email</label>
-                            <input type="email" name="username" id="form3Example1cg" class="form-control" required />
+                            <input name="username" id="form3Example1cg" class="form-control" required />
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label" for="form3Example2cg">Password</label>
