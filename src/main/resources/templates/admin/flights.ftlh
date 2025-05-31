@@ -15,7 +15,7 @@
                         <#if companies?? && companies?has_content>
                             <#list companies as company>
                                 <h4 class="d-flex align-items-center">
-                                    <img src="${company.logoPath?has_content?then('/api/images/' + company.logoPath, defaultLogo)}" alt="${company.name} Logo" class="company-logo me-3" />
+                                    <img src="${company.logoPath?has_content?then('/api/images/' + company.logoPath, defaultLogo)}" alt="${company.name} Logo" class="company-logo me-3" onerror="this.src='${defaultLogo}'" style="max-height: 50px;"/>
                                     ${company.name} (${company.email})
                                 </h4>
                                 <table class="table table-striped mb-5">
@@ -25,6 +25,7 @@
                                         <th>Departure</th>
                                         <th>Arrival</th>
                                         <th>Seats</th>
+                                        <th>Bookings</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -43,27 +44,30 @@
                                                     </#list>
                                                 </ul>
                                             </td>
+                                            <td>${flight.count}</td>
                                         </tr>
                                     </#list>
                                     </tbody>
                                 </table>
                             </#list>
 
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination justify-content-center">
-                                    <li class="page-item <#if currentPage == 0>disabled</#if>">
-                                        <a class="page-link" href="?page=${currentPage - 1}" <#if currentPage == 0>tabindex="-1" aria-disabled="true"</#if>>Previous</a>
-                                    </li>
-                                    <#list 0..<totalPages as p>
-                                        <li class="page-item <#if p == currentPage>active</#if>">
-                                            <a class="page-link" href="?page=${p}">${p + 1}</a>
+                            <#if totalPages gt 1>
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item <#if currentPage == 0>disabled</#if>">
+                                            <a class="page-link" href="/admin/flights?page=${currentPage - 1}" <#if currentPage == 0>tabindex="-1" aria-disabled="true"</#if>>Previous</a>
                                         </li>
-                                    </#list>
-                                    <li class="page-item <#if currentPage == totalPages - 1>disabled</#if>">
-                                        <a class="page-link" href="?page=${currentPage + 1}" <#if currentPage == totalPages - 1>tabindex="-1" aria-disabled="true"</#if>>Next</a>
-                                    </li>
-                                </ul>
-                            </nav>
+                                        <#list 0..<totalPages as p>
+                                            <li class="page-item <#if p == currentPage>active</#if>">
+                                                <a class="page-link" href="/admin/flights?page=${p}">${p + 1}</a>
+                                            </li>
+                                        </#list>
+                                        <li class="page-item <#if currentPage == totalPages - 1>disabled</#if>">
+                                            <a class="page-link" href="/admin/flights?page=${currentPage + 1}" <#if currentPage == totalPages - 1>tabindex="-1" aria-disabled="true"</#if>>Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </#if>
                             <p class="text-center text-muted">
                                 Showing page ${currentPage + 1} of ${totalPages} (${totalItems} total companies)
                             </p>
@@ -91,6 +95,9 @@
                 max-height: 40px;
                 max-width: 80px;
             }
+        }
+        table td, table th {
+            vertical-align: middle;
         }
     </style>
 </@layout.layout>

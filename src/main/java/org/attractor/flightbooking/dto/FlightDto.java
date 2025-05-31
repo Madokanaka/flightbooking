@@ -38,4 +38,6 @@ public class FlightDto {
         private String name;
         private String logoPath;
     }
+
+    private Long count;
 }

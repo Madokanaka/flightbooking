@@ -33,9 +33,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public long countBookingsByCompanyId(Long companyId) {
-        log.info("Counting bookings for companyId={}", companyId);
-        return ticketRepository.countByFlightCompanyIdAndIsBookedTrue(companyId);
+    public long countBookingsByFlightId(Long flightId) {
+        return ticketRepository.countByFlightIdAndIsBookedTrue(flightId);
     }
 
     @Override

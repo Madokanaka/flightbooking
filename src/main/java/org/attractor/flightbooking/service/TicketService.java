@@ -11,7 +11,8 @@ public interface TicketService {
 
     void updateTicketStatus(Long ticketId, boolean isBooked);
 
-    long countBookingsByCompanyId(Long companyId);
+
+    long countBookingsByFlightId(Long flightId);
 
     boolean hasActiveBookings(Long companyId);
 }

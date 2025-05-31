@@ -3,6 +3,7 @@ package org.attractor.flightbooking.controller;
 import jakarta.validation.Valid;
 import org.attractor.flightbooking.dto.CompanyCreationDto;
 import org.attractor.flightbooking.dto.CompanyDto;
+import org.attractor.flightbooking.dto.FlightDto;
 import org.attractor.flightbooking.dto.UserDto;
 import org.attractor.flightbooking.service.TicketService;
 import org.attractor.flightbooking.service.UserService;
@@ -89,17 +90,25 @@ public class AdminController {
     }
 
     @GetMapping("/flights")
-    public String viewFlights(Model model,
-                              @RequestParam(defaultValue = "0") int page) {
+    public String viewFlights(Model model, @RequestParam(defaultValue = "0") int page) {
+        if (page < 0) {
+            page = 0;
+        }
         Pageable pageable = PageRequest.of(page, 1);
         Page<CompanyDto> companyPage = userService.findAllCompaniesWithFlights(pageable);
-        Map<Long, Long> bookingCounts = new HashMap<>();
-        for (CompanyDto company : companyPage.getContent()) {
-            long count = ticketService.countBookingsByCompanyId(company.getId());
-            bookingCounts.put(company.getId(), count);
+        if (page >= companyPage.getTotalPages() && companyPage.getTotalPages() > 0) {
+            page = companyPage.getTotalPages() - 1;
+            pageable = PageRequest.of(page, 1);
+            companyPage = userService.findAllCompaniesWithFlights(pageable);
         }
+
+        for (CompanyDto company : companyPage.getContent()) {
+            for (FlightDto flight : company.getFlights()) {
+                flight.setCount(ticketService.countBookingsByFlightId(flight.getId()));
+            }
+        }
+
         model.addAttribute("companies", companyPage.getContent());
-        model.addAttribute("bookingCounts", bookingCounts);
         model.addAttribute("currentPage", companyPage.getNumber());
         model.addAttribute("totalPages", companyPage.getTotalPages());
         model.addAttribute("totalItems", companyPage.getTotalElements());
