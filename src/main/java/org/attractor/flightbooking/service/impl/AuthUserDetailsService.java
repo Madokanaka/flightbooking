@@ -32,7 +32,7 @@ public class AuthUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                user.getIsFrozen(),
+                !user.getIsFrozen(),
                 true,
                 true,
                 true,
