@@ -6,9 +6,9 @@
         <#assign
         userPr = SPRING_SECURITY_CONTEXT.authentication.principal
         name = userPr.getUsername()
-        isAdmin = userPr.authorities?seq_contains("ROLE_ADMIN")
-        isCompany = userPr.authorities?seq_contains("ROLE_COMPANY")
-        isUser = userPr.authorities?seq_contains("ROLE_USER")
+        isAdmin = userPr.authorities?seq_contains("ADMIN")
+        isCompany = userPr.authorities?seq_contains("COMPANY")
+        isUser = userPr.authorities?seq_contains("USER")
         >
     </#if>
 
@@ -103,12 +103,25 @@
                                             <p class="mb-0 fw-bold">From ${flight.tickets[0].price} USD</p>
                                         </div>
                                         <div class="col-md-2 text-end">
-                                            <button class="btn btn-primary btn-sm px-3"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#ticketModal${flight.id}"
-                                                    <#if !known || isAdmin || isCompany>disabled</#if>>
-                                                Book Now
-                                            </button>
+                                            <div class="col-md-2 text-end">
+                                                <#if known>
+                                                    <#if isUser>
+                                                        <button class="btn btn-primary btn-sm px-3"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#ticketModal${flight.id}">
+                                                            Book Now
+                                                        </button>
+                                                    <#else>
+                                                        <button class="btn btn-primary btn-sm px-3" disabled title="Only users with ROLE_USER can book flights">
+                                                            Book Now
+                                                        </button>
+                                                    </#if>
+                                                <#else>
+                                                    <a href="/auth/login" class="btn btn-primary btn-sm px-3">
+                                                        Book Now
+                                                    </a>
+                                                </#if>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

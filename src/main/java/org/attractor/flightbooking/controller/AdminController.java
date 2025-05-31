@@ -34,8 +34,15 @@ public class AdminController {
 
     @GetMapping
     public String dashboard(Model model, @RequestParam(defaultValue = "0") int page) {
+        if (page < 0) {
+            page = 0;
+        }
         int pageSize = 5;
         Page<UserDto> companyPage = userService.findAllCompanies(page, pageSize);
+        if (page >= companyPage.getTotalPages() && companyPage.getTotalPages() > 0) {
+            page = companyPage.getTotalPages() - 1;
+            companyPage = userService.findAllCompanies(page, 5);
+        }
         model.addAttribute("companies", companyPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", companyPage.getTotalPages());

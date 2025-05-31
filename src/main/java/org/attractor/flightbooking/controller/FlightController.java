@@ -26,8 +26,16 @@ public class FlightController {
     private final FlightService flightService;
 
     @GetMapping
-    public String showFlightsPage(Model model) {
-        Page<FlightDto> flights = flightService.findAllFlights(1);
+    public String showFlightsPage(Model model, @RequestParam(defaultValue = "1") int page) {
+        if (page < 1) {
+            page = 1;
+        }
+
+        Page<FlightDto> flights = flightService.findAllFlights(page);
+        if (page > flights.getTotalPages() && flights.getTotalPages() > 0) {
+            page = flights.getTotalPages();
+            flights = flightService.findAllFlights(page);
+        }
         model.addAttribute("flights", flights.getContent());
         model.addAttribute("currentPage", 1);
         model.addAttribute("totalPages", flights.getTotalPages());
@@ -43,6 +51,10 @@ public class FlightController {
             BindingResult bindingResult,
             @RequestParam(defaultValue = "1") int page,
             Model model) {
+        if (page < 1) {
+            page = 1;
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("flights", null);
             model.addAttribute("currentPage", 1);
@@ -65,6 +77,17 @@ public class FlightController {
                 searchDto.getDepartureDate(),
                 searchDto.getReturnDate(),
                 page);
+
+        if (page > flights.getTotalPages() && flights.getTotalPages() > 0) {
+            page = flights.getTotalPages();
+            flights = flightService.searchFlights(
+                    searchDto.getDepartureCity(),
+                    searchDto.getArrivalCity(),
+                    searchDto.getDepartureDate(),
+                    searchDto.getReturnDate(),
+                    page);
+        }
+        
         model.addAttribute("flights", flights.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", flights.getTotalPages());
