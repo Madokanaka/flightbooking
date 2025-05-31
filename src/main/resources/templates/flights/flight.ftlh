@@ -110,7 +110,56 @@
                                             <p class="mb-0 fw-bold">From ${flight.tickets[0].price} USD</p>
                                         </div>
                                         <div class="col-md-2 text-end">
-                                            <a href="${(known && isUser)?then('/booking?ticketId=${flight.tickets[0].id}', '/auth/login')}" class="btn btn-primary btn-sm px-3">Book Now</a>
+                                            <button class="btn btn-primary btn-sm px-3"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ticketModal${flight.id}"
+                                                    <#if !known || isAdmin || isCompany>disabled</#if>>
+                                                Book Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ticket Modal -->
+                            <div class="modal fade" id="ticketModal${flight.id}" tabindex="-1" aria-labelledby="ticketModalLabel${flight.id}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="ticketModalLabel${flight.id}">Tickets for Flight ${flight.flightNumber}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h6>Flight Details</h6>
+                                            <p>
+                                                From: ${cityOptions[flight.departureCity]!flight.departureCity}<br>
+                                                To: ${cityOptions[flight.arrivalCity]!flight.arrivalCity}<br>
+                                                Departure: ${flight.departureTime}<br>
+                                                Arrival: ${flight.arrivalTime}<br>
+                                                Company: ${flight.company.name}
+                                            </p>
+                                            <h6>Available Tickets</h6>
+                                            <div class="seat-map">
+                                                <#list flight.tickets as ticket>
+                                                    <div class="seat ${ticket.ticketClass?lower_case} <#if ticket.isBooked()>booked</#if>"
+
+                                                         data-ticket-id="${ticket.id}"
+                                                         data-seat-number="${ticket.seatNumber}"
+                                                         data-price="${ticket.price}"
+                                                         data-class="${ticket.ticketClass}">
+                                                        ${ticket.seatNumber}
+                                                    </div>
+                                                </#list>
+                                            </div>
+                                            <div id="selected-ticket-info${flight.id}" class="mt-3"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary book-ticket-btn"
+                                                    data-flight-id="${flight.id}"
+                                                    disabled>
+                                                Book
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -147,6 +196,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .seat-map {
+            display: grid;
+            grid-template-columns: repeat(4, 50px);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .seat {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ccc;
+            text-align: center;
+            line-height: 50px;
+            cursor: pointer;
+        }
+        .seat.economy { background-color: #d4edda; }
+        .seat.business { background-color: #fff3cd; }
+        .seat.booked { background-color: #f8d7da; cursor: not-allowed; }
+        .seat:hover:not(.booked) { background-color: #007bff; color: white; }
+        .seat.selected { background-color: #007bff; color: white; }
+    </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -213,6 +288,85 @@
                 document.querySelector('#dateRange').value = '';
                 document.querySelector('#departureDate').value = '';
                 document.querySelector('#returnDate').value = '';
+            });
+
+            // Seat selection
+            // Seat selection
+            // Seat selection
+            document.querySelectorAll('.seat').forEach(seat => {
+                seat.addEventListener('click', function() {
+                    if (this.classList.contains('booked')) {
+                        return;
+                    }
+                    const modal = this.closest('.modal');
+                    const flightId = modal.querySelector('.book-ticket-btn').dataset.flightId;
+                    const ticketId = this.dataset.ticketId;
+                    const seatNumber = this.dataset.seatNumber;
+                    const price = this.dataset.price;
+                    const ticketClass = this.dataset.class;
+
+                    // Логи для отладки
+                    console.log('Flight ID:', flightId);
+                    console.log('Ticket ID:', ticketId);
+
+                    // Highlight selected seat
+                    modal.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    // Update ticket info
+                    modal.querySelector('#selected-ticket-info' + flightId).innerHTML =
+                        '<p>Selected Seat: ' + seatNumber + '</p>' +
+                        '<p>Class: ' + ticketClass + '</p>' +
+                        '<p>Price: $' + price + '</p>';
+
+                    // Enable book button
+                    const bookButton = modal.querySelector('.book-ticket-btn');
+                    bookButton.disabled = false;
+                    bookButton.dataset.ticketId = ticketId;
+                });
+            });
+
+// Booking
+            document.querySelectorAll('.book-ticket-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const ticketId = this.dataset.ticketId;
+                    const flightId = this.dataset.flightId;
+
+                    if (!ticketId || !flightId) {
+                        alert('Ticket ID or Flight ID is missing.');
+                        return;
+                    }
+
+                    fetch('/book', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content // Для CSRF
+                        },
+                        body: JSON.stringify({ ticketId: ticketId, flightId: flightId })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => { throw new Error(text); });
+                            }
+                            return response.text();
+                        })
+                        .then(message => {
+                            alert(message);
+                            const modal = document.querySelector('#ticketModal' + flightId);
+                            modal.classList.remove('show');
+                            document.body.classList.remove('modal-open');
+                            document.querySelector('.modal-backdrop')?.remove();
+                            location.reload();
+                        })
+                        .catch(error => {
+                            if (error.message.startsWith('redirect:')) {
+                                window.location.href = error.message.replace('redirect:', '');
+                            } else {
+                                alert(error.message);
+                            }
+                        });
+                });
             });
         });
     </script>

@@ -2,6 +2,7 @@ package org.attractor.flightbooking.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.attractor.flightbooking.dto.UserDto;
+import org.attractor.flightbooking.exception.UserNotFoundException;
 import org.attractor.flightbooking.model.Role;
 import org.attractor.flightbooking.model.User;
 import org.attractor.flightbooking.repository.UserRepository;
@@ -35,6 +36,11 @@ public class UserServiceImpl implements UserService {
         user.setRoles(List.of(userRole));
 
         userRepository.save(user);
+    }
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override

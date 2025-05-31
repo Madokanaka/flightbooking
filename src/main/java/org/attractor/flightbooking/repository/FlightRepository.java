@@ -24,4 +24,6 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             @Param("returnDate") LocalDateTime returnDate,
             Pageable pageable);
 
+    Page<Flight> findByDepartureCityAndArrivalCity(String departureCity, String arrivalCity, Pageable pageable);
+
 }
