@@ -87,13 +87,14 @@ public class FlightController {
                     searchDto.getReturnDate(),
                     page);
         }
-        
+
         model.addAttribute("flights", flights.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", flights.getTotalPages());
         model.addAttribute("cityOptions", Arrays.stream(City.values())
                 .collect(Collectors.toMap(City::name, City::getDisplayName, (a, b) -> a, LinkedHashMap::new)));
         model.addAttribute("searchDto", searchDto);
+        model.addAttribute("searchPerformed", true);
         return "flights/flight";
     }
 }

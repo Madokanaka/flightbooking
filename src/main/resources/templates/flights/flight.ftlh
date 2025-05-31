@@ -171,22 +171,34 @@
                             </div>
                         </#list>
 
+                    <#-- В пагинации используйте условные ссылки -->
                         <#if totalPages?? && totalPages gt 1>
                             <nav aria-label="Page navigation" class="mt-4">
                                 <ul class="pagination justify-content-center">
                                     <#if currentPage gt 1>
                                         <li class="page-item">
-                                            <a class="page-link" href="/flights/search?page=${currentPage - 1}&departureCity=${searchDto.departureCity!''}&arrivalCity=${searchDto.arrivalCity!''}&departureDate=${searchDto.departureDate!''}&returnDate=${searchDto.returnDate!''}">Previous</a>
+                                            <a class="page-link"
+                                               href="<#if searchPerformed??>/flights/search?page=${currentPage - 1}&departureCity=${searchDto.departureCity!''}&arrivalCity=${searchDto.arrivalCity!''}&departureDate=${searchDto.departureDate!''}&returnDate=${searchDto.returnDate!''}<#else>/flights?page=${currentPage - 1}</#if>">
+                                                Previous
+                                            </a>
                                         </li>
                                     </#if>
-                                    <#list 1..totalPages as page>
-                                        <li class="page-item <#if page == currentPage>active</#if>">
-                                            <a class="page-link" href="/flights/search?page=${page}&departureCity=${searchDto.departureCity!''}&arrivalCity=${searchDto.arrivalCity!''}&departureDate=${searchDto.departureDate!''}&returnDate=${searchDto.returnDate!''}">${page}</a>
+
+                                    <#list 1..totalPages as pg>
+                                        <li class="page-item <#if pg == currentPage>active</#if>">
+                                            <a class="page-link"
+                                               href="<#if searchPerformed??>/flights/search?page=${pg}&departureCity=${searchDto.departureCity!''}&arrivalCity=${searchDto.arrivalCity!''}&departureDate=${searchDto.departureDate!''}&returnDate=${searchDto.returnDate!''}<#else>/flights?page=${pg}</#if>">
+                                                ${pg}
+                                            </a>
                                         </li>
                                     </#list>
+
                                     <#if currentPage lt totalPages>
                                         <li class="page-item">
-                                            <a class="page-link" href="/flights/search?page=${currentPage + 1}&departureCity=${searchDto.departureCity!''}&arrivalCity=${searchDto.arrivalCity!''}&departureDate=${searchDto.departureDate!''}&returnDate=${searchDto.returnDate!''}">Next</a>
+                                            <a class="page-link"
+                                               href="<#if searchPerformed??>/flights/search?page=${currentPage + 1}&departureCity=${searchDto.departureCity!''}&arrivalCity=${searchDto.arrivalCity!''}&departureDate=${searchDto.departureDate!''}&returnDate=${searchDto.returnDate!''}<#else>/flights?page=${currentPage + 1}</#if>">
+                                                Next
+                                            </a>
                                         </li>
                                     </#if>
                                 </ul>
