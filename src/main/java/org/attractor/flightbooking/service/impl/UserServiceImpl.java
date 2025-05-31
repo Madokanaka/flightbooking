@@ -44,6 +44,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto findUserDtoByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setEmail(user.getEmail());
+        userDto.setName(user.getName());
+        userDto.setLogoPath(user.getLogoPath());
+        return userDto;
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }

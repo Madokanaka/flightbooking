@@ -8,5 +8,7 @@ public interface UserService {
 
     User findByEmail(String email);
 
+    UserDto findUserDtoByEmail(String email);
+
     boolean existsByEmail(String email);
 }
