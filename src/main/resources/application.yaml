@@ -19,6 +19,9 @@ spring:
         enabled: true
   freemarker:
     expose-request-attributes: true
+    settings:
+      boolean_format: c
+    cache: false
   datasource:
     url: jdbc:h2:./db/booking;AUTO_SERVER=TRUE
     username: root
