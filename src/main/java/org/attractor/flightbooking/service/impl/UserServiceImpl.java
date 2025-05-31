@@ -16,7 +16,9 @@ import org.attractor.flightbooking.service.RoleService;
 import org.attractor.flightbooking.service.TicketService;
 import org.attractor.flightbooking.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,11 +160,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAllCompanies() {
-        log.info("Fetching all companies");
-        return userRepository.findByRolesRoleName("COMPANY").stream()
-                .map(this::toUserDto)
-                .collect(Collectors.toList());
+    public Page<UserDto> findAllCompanies(int page, int size) {
+        log.info("Fetching companies with pagination: page {}, size {}", page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
+        return userRepository.findByRolesRoleName("COMPANY", pageable)
+                .map(this::toUserDto);
     }
 
     @Override

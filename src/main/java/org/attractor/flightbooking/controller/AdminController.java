@@ -32,9 +32,13 @@ public class AdminController {
     private TicketService ticketService;
 
     @GetMapping
-    public String dashboard(Model model) {
-        List<UserDto> companies = userService.findAllCompanies();
-        model.addAttribute("companies", companies);
+    public String dashboard(Model model, @RequestParam(defaultValue = "0") int page) {
+        int pageSize = 5;
+        Page<UserDto> companyPage = userService.findAllCompanies(page, pageSize);
+        model.addAttribute("companies", companyPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", companyPage.getTotalPages());
+        model.addAttribute("totalItems", companyPage.getTotalElements());
         return "admin/dashboard";
     }
 

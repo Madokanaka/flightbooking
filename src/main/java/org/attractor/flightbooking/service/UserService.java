@@ -28,7 +28,9 @@ public interface UserService {
 
     UserDto findUserDtoById(Long id);
 
-    List<UserDto> findAllCompanies();
+
+
+    Page<UserDto> findAllCompanies(int page, int size);
 
     Page<CompanyDto> findAllCompaniesWithFlights(Pageable pageable);
     boolean existsByEmail(String email);
